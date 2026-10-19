@@ -57,21 +57,25 @@ export const BangDieuKhienGiaoVien = () => {
       setDanhSachLop(dsLop || []);
       setDanhSachBaiTap(dsBt || []);
       setDanhSachBaiNop(dsBn || []);
+      // Hiển thị giao diện bảng điều khiển ngay lập tức (không chờ AI)
+      setDangTai(false);
 
+      // Phân tích AI chạy ngầm bất đồng bộ
       if (dsLop && dsLop.length > 0) {
         setDangTaiAi(true);
-        try {
-          const aiRes = await aiDichVu.phanTichLop(dsLop[0].id);
-          setAiBaoCao(aiRes);
-        } catch (e) {
-          console.warn('Lỗi phân tích AI:', e);
-        } finally {
-          setDangTaiAi(false);
-        }
+        aiDichVu.phanTichLop(dsLop[0].id)
+          .then((aiRes) => {
+            if (aiRes) setAiBaoCao(aiRes);
+          })
+          .catch((e) => {
+            console.warn('Lỗi phân tích AI:', e);
+          })
+          .finally(() => {
+            setDangTaiAi(false);
+          });
       }
     } catch (err) {
       console.error('Lỗi tải dashboard giáo viên:', err);
-    } finally {
       setDangTai(false);
     }
   };

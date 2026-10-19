@@ -229,19 +229,20 @@ export const BangDieuKhienSinhVien = () => {
           setDanhSachLop([]);
         }
 
-        // Tải kế hoạch AI cá nhân hóa theo ĐTB và tiến độ
-        try {
-          const aiRes = await aiDichVu.layDinhHuongHomNay();
-          if (aiRes) {
-            setAiKeHoach(aiRes);
-          }
-        } catch (e) {
-          console.warn('Sử dụng dữ liệu AI cục bộ:', e);
-        }
+        // Hiển thị giao diện ngay lập tức
+        setDangTai(false);
+
+        // Tải kế hoạch AI cá nhân hóa theo ĐTB và tiến độ (chạy ngầm)
+        aiDichVu.layDinhHuongHomNay()
+          .then(aiRes => {
+            if (aiRes) setAiKeHoach(aiRes);
+          })
+          .catch(e => {
+            console.warn('Sử dụng dữ liệu AI cục bộ:', e);
+          });
 
       } catch (e) {
         console.error('Lỗi tải dữ liệu bảng điều khiển:', e);
-      } finally {
         setDangTai(false);
       }
     };

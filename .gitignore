@@ -43,6 +43,11 @@ pnpm-debug.log*
 .env.local
 .env.*.local
 
+# User uploaded files
+uploads/
+*/uploads/
+backend/uploads/
+
 # Package-lock optional / temporary files
 *.tmp
 *.bak

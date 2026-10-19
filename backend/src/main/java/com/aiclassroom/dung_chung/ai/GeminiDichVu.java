@@ -24,15 +24,13 @@ public class GeminiDichVu {
     @Value("${gemini.api-key:AIzaSyDMA_PIfqUYcVq-50sEd2xmA64raIypyBU}")
     private String geminiApiKey;
 
-    @Value("${gemini.model:gemini-3.5-flash-lite}")
+    @Value("${gemini.model:gemini-1.5-flash}")
     private String geminiModel;
 
     private static final List<String> DANH_SACH_MODEL_DU_PHONG = List.of(
-            "gemini-3.5-flash-lite",
-            "gemini-3.1-flash-lite",
-            "gemini-3-flash-preview",
-            "gemma-4-26b-a4b-it",
-            "gemini-2.5-flash"
+            "gemini-1.5-flash",
+            "gemini-2.0-flash",
+            "gemini-1.5-pro"
     );
 
     public String goiGemini(String promptHeThong, String promptNguoiDung) {
@@ -51,7 +49,7 @@ public class GeminiDichVu {
             return ketQua;
         }
 
-        // Thử lần lượt các model dự phòng
+        // Thử model dự phòng đầu tiên
         for (String modelPhu : DANH_SACH_MODEL_DU_PHONG) {
             if (!modelPhu.equalsIgnoreCase(geminiModel)) {
                 log.info("Đang chuyển sang model dự phòng: {}", modelPhu);
@@ -59,6 +57,7 @@ public class GeminiDichVu {
                 if (ketQua != null && !ketQua.isBlank()) {
                     return ketQua;
                 }
+                break; // Chỉ thử tối đa 1 model dự phòng để không làm chậm request
             }
         }
 
@@ -91,7 +90,7 @@ public class GeminiDichVu {
                     .bodyValue(requestBody)
                     .retrieve()
                     .bodyToMono(String.class)
-                    .timeout(Duration.ofSeconds(15))
+                    .timeout(Duration.ofSeconds(5))
                     .block();
 
             if (rawJson != null) {
